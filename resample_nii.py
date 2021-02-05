@@ -30,15 +30,6 @@ for folder in os.listdir(BASE_FOLDER): # list all files/dirs in folder
 
 
 
-# INPUT_PATH = 'C:\\Users\\Kayla\\Desktop\\scripts\\manual_extraction_files\\Myelin1_01\\manual_brain_mask-label-1.nii'
-# ORIG_PATH = 'C:\\Users\\Kayla\\Desktop\\scripts\\manual_extraction_files\\Myelin1_01\\oT1.nii'
-# OUTPUT_ID = '-resampled'
 
-# input_ = nib.load(INPUT_PATH)
-# orig = nib.load(ORIG_PATH)
-
-# output = resample_from_to(input_, orig, order=0)
-# print(orig.shape,input_.shape,output.shape)
-# nib.save(output, os.path.splitext(INPUT_PATH)[0] + OUTPUT_ID + '.nii')
 
 
