@@ -10,10 +10,11 @@ from object_detection.utils import dataset_util
 import random
 import PIL
 
+#TF record file stores data as a sequence of binary strings (https://www.tensorflow.org/tutorials/load_data/tfrecord)
 
 def get_bounding_boxes(annotation):
   img = nib.load(annotation) 
-  data = img.get_fdata() # returns numpy array with ? loaded in it
+  data = img.get_fdata() 
   res = []
   #for y in range(data.shape[1]):
   for x in range(data.shape[0]): #(x,y,z)
@@ -37,6 +38,7 @@ def get_bounding_boxes(annotation):
     res.append((xmins, xmaxs, ymins, ymaxs))
   return res
 
+#The tf.train.Example message (or protobuf) is a flexible message type that represents a {"string": value} mapping.
 def create_tf_example(example):
   height = 288 # Image height
   width = 288 # Image width
@@ -56,15 +58,14 @@ def create_tf_example(example):
   classes_text = ['Brain'.encode('utf-8')] # List of string class name of bounding box (1 per box)
   classes = [1] # List of integer class id of bounding box (1 per box)
 
-  # with tf.io.gfile.GFile(example['mask'], 'rb') as fid: # opens filename and set mask
-  #   mask = fid.read()
+ 
   pil_image = PIL.Image.open(example['mask'])
   output_io = io.BytesIO()
   pil_image.convert('L').save(output_io, format='PNG')
   mask = output_io.getvalue()
   masks = [mask]
 
-  # dictionary describing the features
+  # Dictionary describing the features
   tf_example = tf.train.Example(features=tf.train.Features(feature={
       'image/height': dataset_util.int64_feature(height),
       'image/width': dataset_util.int64_feature(width),
@@ -85,9 +86,7 @@ def create_tf_example(example):
 def main():
     test_writer = tf.io.TFRecordWriter('test.record')
     train_writer = tf.io.TFRecordWriter('train.record')
-    #annotation_name = 'manual_brain_mask-label-1.nii'
-    annotation_name = 'manual_brain_mask-label-resampled.nii'
-    #annotation_name = 'manual_brain_mask-label-1-resampled.nii'
+    annotation_name = 'manual_brain_mask-label-1-resampled.nii'
     base_folder = 'C:\\Users\\Kayla\\Desktop\\scripts\\manual_extraction_files'
 
     for folder in os.listdir(base_folder): # list all files/dirs in folder
@@ -103,10 +102,9 @@ def main():
             else:
               writer = train_writer
               print('train', folder)
-            # get_bounding_boxes returns a list of bounding boxes per slice
+            # Get_bounding_boxes returns a list of bounding boxes per slice
             for i, (xmins, xmaxs, ymins, ymaxs) in enumerate(get_bounding_boxes(annotation_path)):
                 # print(xmins, xmaxs, ymins, ymaxs)
-                #creating an object (with curly brackets)
                 example = {
                     'filename': os.path.join('images', folder) + '_slice_' + str(i) + '.png',
                     'mask': os.path.join('annotations', folder) + '_slice_' + str(i) + '.png',
@@ -131,9 +129,7 @@ def main():
 if __name__ == '__main__':
     main()
 
-#inspect the tf.record file
-#for example in tf.python_io.tf_record_iterator("example.record"):
- #   print(tf.train.Example.FromString(example))
+
 
 
 
