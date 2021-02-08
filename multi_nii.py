@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import matplotlib
 from PIL import Image
 import tensorflow as tf
-#import tkinter
 import os
 
 from object_detection.utils import ops as utils_ops
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_utils
 
+#
 def load_images_from_nii(path, cmap='viridis', start_from=0): #max256
     res = []
     nii = nib.load(path)
@@ -51,11 +51,11 @@ def single_nii(nii_path, detection_model):
         image_with_detections = image.copy()
 
         if 'detection_masks' in detections:
-            # we need to convert np.arrays to tensors
+            # convert np.arrays to tensors
             detection_masks = tf.convert_to_tensor(detections['detection_masks'][0])
             detection_boxes = tf.convert_to_tensor(detections['detection_boxes'][0])
 
-            # # Reframe the the bbox mask to the image size.
+            #  Reframe the the bbox mask to the image size.
             confidence = 0.5
             detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(
                     detection_masks, detection_boxes,
