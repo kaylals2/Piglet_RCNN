@@ -27,10 +27,10 @@ os.mkdir('images')
 shutil.rmtree('annotations')
 os.mkdir('annotations')
 
-# Populate annotation folder with .pngs
-for folder in os.listdir(base_folder): # list all files/dirs in folder
-    folder_path = os.path.join(base_folder, folder) # join arguments with os specific seperator.
-    if os.path.isdir(folder_path): # only select directories.
+# Iterate through subject folders to convert each .nii to .pngs
+for folder in os.listdir(base_folder): 
+    folder_path = os.path.join(base_folder, folder) 
+    if os.path.isdir(folder_path):
         print(folder)
         image_path = os.path.join(folder_path, image_name)
         nii_to_img(image_path, os.path.join('images', folder))
