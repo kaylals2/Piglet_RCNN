@@ -65,7 +65,7 @@ def create_tf_example(example):
   mask = output_io.getvalue()
   masks = [mask]
 
-  # Dictionary describing the features
+  # Dictionary describing features
   tf_example = tf.train.Example(features=tf.train.Features(feature={
       'image/height': dataset_util.int64_feature(height),
       'image/width': dataset_util.int64_feature(width),
@@ -82,6 +82,7 @@ def create_tf_example(example):
       'image/object/mask': dataset_util.bytes_list_feature(masks)
   }))
   return tf_example
+
 
 def main():
     test_writer = tf.io.TFRecordWriter('test.record')
@@ -102,7 +103,7 @@ def main():
             else:
               writer = train_writer
               print('train', folder)
-            # Get_bounding_boxes returns a list of bounding boxes per slice
+              # Get_bounding_boxes returns a list of bounding boxes per slice
             for i, (xmins, xmaxs, ymins, ymaxs) in enumerate(get_bounding_boxes(annotation_path)):
                 # print(xmins, xmaxs, ymins, ymaxs)
                 example = {
@@ -115,16 +116,10 @@ def main():
                 }
                 # print(example)
                 tf_example = create_tf_example(example)
-                #if len(xmins) > 0: ##remove empty slices from tf record
-                # if random.randint(1,101) > 80:
-                #   test_writer.write(tf_example.SerializeToString())
-                # else:
-                #   train_writer.write(tf_example.SerializeToString())
                 writer.write(tf_example.SerializeToString())
                 
     test_writer.close()
     train_writer.close()
-
 
 if __name__ == '__main__':
     main()
