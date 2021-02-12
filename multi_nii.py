@@ -1,5 +1,5 @@
 import numpy as np #'Numerical Python' package
-import nibabel as nib #neuroimaging file format package 
+import nibabel as nib #Neuroimaging file format package 
 import io
 import matplotlib.pyplot as plt
 import matplotlib
@@ -11,7 +11,7 @@ from object_detection.utils import ops as utils_ops
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_utils
 
-#
+
 def load_images_from_nii(path, cmap='viridis', start_from=0): #max256
     res = []
     nii = nib.load(path)
@@ -30,28 +30,26 @@ def load_images_from_nii(path, cmap='viridis', start_from=0): #max256
             (1, im_height, im_width, 3)).astype(np.uint8)
         res.append(img)
         buf.close()
-
     return res
 
+# Take affine from input nii file
 def single_nii(nii_path, detection_model):
-    # take affine from input nii file
     nii = nib.load(nii_path)
     affine = nii.affine
-
     images = load_images_from_nii(nii_path)
 
-    # Detect for each
-    detection_masks_l = np.zeros(nii.shape) # detection masks list to avoid naming conflict. Sign code is too messy
+# Detect for each
+    detection_masks_l = np.zeros(nii.shape) # detection mask list to avoid naming conflict
     for i, image in enumerate(images):
         print(f"Detecting {i}/{len(images)}")
         detections = detection_model(image)
 
-        # tensor to numpy array
+        # Tensor to numpy array
         detections = {key:value.numpy() for key, value in detections.items()}
         image_with_detections = image.copy()
 
+# Convert np.arrays to tensors
         if 'detection_masks' in detections:
-            # convert np.arrays to tensors
             detection_masks = tf.convert_to_tensor(detections['detection_masks'][0])
             detection_boxes = tf.convert_to_tensor(detections['detection_boxes'][0])
 
@@ -68,7 +66,7 @@ def single_nii(nii_path, detection_model):
             # print(detection_masks_reframed_np[0].shape)
             detection_masks_l[i] = detection_masks_reframed_np[0] #idk take the first mask? or mask with id 0?
 
-    # https://nipy.org/nibabel/nifti_images.html
+# https://nipy.org/nibabel/nifti_images.html
     # print(detection_masks_l.shape)
     out_nii = nib.nifti1.Nifti1Image(detection_masks_l.astype(np.uint8), affine)
     # print(out_nii.shape)
