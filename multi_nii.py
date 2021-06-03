@@ -70,12 +70,13 @@ def single_nii(nii_path, detection_model):
     # print(detection_masks_l.shape)
     out_nii = nib.nifti1.Nifti1Image(detection_masks_l.astype(np.uint8), affine)
     # print(out_nii.shape)
-    nib.save(out_nii, os.path.join(os.path.dirname(nii_path), 'auto_v3_50_lr_0.008_200ksteps.nii'))
+    nib.save(out_nii, os.path.join(os.path.dirname(nii_path), 'auto_Model_B.nii'))
 
 SINGLE_NII_PATH = './manual_extraction_files/Myelin1_01/oT1.nii'
 MULTI_NII_PATH = './manual_extraction_files'
 
 #EVAL_FOLDERS = ['Myelin1_09', 'Myelin1_19', 'Myelin1_20', 'Myelin1_28', 'Myelin1_31']
+#EVAL_FOLDERS = ['Myelin1_10','Myelin1_17','Myelin1_26','Myelin1_37','Myelin1_44']
 
 MODEL_PATH = './inference_graph/saved_model'
 LABEL_PATH = './label_map.txt'
@@ -87,7 +88,7 @@ detection_model = tf.saved_model.load(MODEL_PATH)
 
 for folder in os.listdir(MULTI_NII_PATH): # list all files/dirs in folder
     folder_path = os.path.join(MULTI_NII_PATH, folder) # join arguments with os specific seperator.
-    #if os.path.isdir(folder_path) and folder in EVAL_FOLDERS: # only select directories. If uncommented, indent next three lines
+    #if os.path.isdir(folder_path) and folder in EVAL_FOLDERS: # only select directories. 
     print(folder)
     nii_path = os.path.join(folder_path, INPUT_NAME)
     single_nii(nii_path, detection_model)
